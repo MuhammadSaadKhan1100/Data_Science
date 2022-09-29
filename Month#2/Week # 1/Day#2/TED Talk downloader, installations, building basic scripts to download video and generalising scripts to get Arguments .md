@@ -1,5 +1,7 @@
-# Building TED Talk video downloader:
-  # Steps required:
+# Building TED Talk video downloader 🧱:
+![image](https://user-images.githubusercontent.com/112848881/193107765-4dfb41ef-9e29-4b2c-8859-88d23b7d353a.png)
+
+  # Steps required 🏃‍♂️:
   * Installation and Introduction to request packages
   * Building the basic script to download the video
   * Generalising the scripts to get arguments
