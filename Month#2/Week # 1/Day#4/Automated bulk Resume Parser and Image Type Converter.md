@@ -157,5 +157,50 @@ result_df
 
 
 result_df.to_csv('output/csv/parsed_resumes.csv')
-* 🔚
 ```
+# Image Type Converter:
+* Converting image type from one type to other
+* Example:
+* png to jpg
+* bmp to png
+# Contents:
+* Converting images from one image type to another
+* image manipulation in python
+* CLI Tool(helps in image type conversion)
+
+# Types of image compression:
+* lossless compression
+* lossy compression
+
+* JPEG -> Joint Photographic Experts Group
+* PNG -> Portable Network Graphics
+
+# Installation of package Pillow(PIL):
+![image](https://user-images.githubusercontent.com/112848881/193417808-7f53aa5a-4d50-4a81-a87f-524cd641c3d8.png)
+
+# Image converter.py
+```python
+# Saad Image converter
+from PIL import Image
+
+import glob
+
+print(glob.glob("*.png"))
+
+for file in glob.glob("*.png"):
+    im = Image.open(file)
+    rgb_im = im.convert('RGB')
+    rgb_im.save(file.replace("png", "jpg"), quality=95)
+
+
+'''
+import os
+for file in glob.glob("*.jpg"):
+    os.remove(file)
+'''
+```
+# Output:
+![image](https://user-images.githubusercontent.com/112848881/193418489-4188e799-55a2-4db9-b187-3a45185dea87.png)
+![image](https://user-images.githubusercontent.com/112848881/193418527-ca7f8112-6de4-4c9f-96cf-6871e5dbb0bf.png)
+
+* 🔚
