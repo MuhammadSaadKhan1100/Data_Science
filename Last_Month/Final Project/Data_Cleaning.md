@@ -1,60 +1,76 @@
-# Playing numbers:
+# Playing numbers 🧐🤓:
 # Data Cleaning:
+```python
+"""
+
 import pandas as pd 
 
-df = pd.read_csv('glassdoor_jobs.csv')
+data = pd.read_csv('craigslistVehicles.csv')
+data.columns
 
-# salary parsing 
+data.describe()
 
-df['hourly'] = df['Salary Estimate'].apply(lambda x: 1 if 'per hour' in x.lower() else 0)
-df['employer_provided'] = df['Salary Estimate'].apply(lambda x: 1 if 'employer provided salary:' in x.lower() else 0)
+#remove duplcates 
+data.drop_duplicates(inplace= True)
 
-df = df[df['Salary Estimate'] != '-1']
-salary = df['Salary Estimate'].apply(lambda x: x.split('(')[0])
-minus_Kd = salary.apply(lambda x: x.replace('K','').replace('$',''))
+#check for nulls / % of nulls 
 
-min_hr = minus_Kd.apply(lambda x: x.lower().replace('per hour','').replace('employer provided salary:',''))
+data.isnull().any()
+data.isnull().sum()/ data.shape[0]
 
-df['min_salary'] = min_hr.apply(lambda x: int(x.split('-')[0]))
-df['max_salary'] = min_hr.apply(lambda x: int(x.split('-')[1]))
-df['avg_salary'] = (df.min_salary+df.max_salary)/2
+#remove columns with certain threshold of nulls
+#threshold is the number of columns or rows without nulls 
+thresh = len(data)*.6
+data.dropna(thresh = thresh, axis = 1)
+data.dropna(thresh = 21, axis = 0)
 
-#Company name text only
-df['company_txt'] = df.apply(lambda x: x['Company Name'] if x['Rating'] <0 else x['Company Name'][:-3], axis = 1)
+#imputing nulls fillna()
+data.odometer.fillna(data.odometer.median())
+data.odometer.fillna(data.odometer.mean())
 
-#state field 
-df['job_state'] = df['Location'].apply(lambda x: x.split(',')[1])
-df.job_state.value_counts()
+#everything lower or uppercase
+data.desc.head()
+data.desc.head().apply(lambda x: x.lower())
+data.desc.head().apply(lambda x: x.upper())
 
-df['same_state'] = df.apply(lambda x: 1 if x.Location == x.Headquarters else 0, axis = 1)
+#use regex .extract
+#use strip()
+#use replace()
+#split 
 
-#age of company 
-df['age'] = df.Founded.apply(lambda x: x if x <1 else 2020 - x)
+data.cylinders.dtype
+data.cylinders.value_counts()
+data.cylinders = data.cylinders.apply(lambda x: str(x).replace('cylinders','').strip())
+data.cylinders.value_counts()
 
-#parsing of job description (python, etc.)
+#change data type 
+data.cylinders = pd.to_numeric(data.cylinders, errors = 'coerce')
 
-#python
-df['python_yn'] = df['Job Description'].apply(lambda x: 1 if 'python' in x.lower() else 0)
- 
-#r studio 
-df['R_yn'] = df['Job Description'].apply(lambda x: 1 if 'r studio' in x.lower() or 'r-studio' in x.lower() else 0)
-df.R_yn.value_counts()
 
-#spark 
-df['spark'] = df['Job Description'].apply(lambda x: 1 if 'spark' in x.lower() else 0)
-df.spark.value_counts()
+#boxplot 
+data.boxplot('price')
+data.boxplot('odometer')
 
-#aws 
-df['aws'] = df['Job Description'].apply(lambda x: 1 if 'aws' in x.lower() else 0)
-df.aws.value_counts()
+#outlier detection and normalization remove rows with > 99% / z score 
+numeric = data._get_numeric_data()
 
-#excel
-df['excel'] = df['Job Description'].apply(lambda x: 1 if 'excel' in x.lower() else 0)
-df.excel.value_counts()
+# with no null values 
+from scipy import stats
+import numpy as np 
 
-df.columns
+data_outliers = data[(data.price < data.price.quantile(.995)) & (data.price > data.price.quantile(.005))]
 
-df_out = df.drop(['Unnamed: 0'], axis =1)
+data_outliers.boxplot('price')
 
-df_out.to_csv('salary_data_cleaned.csv',index = False)
+#remove duplcates, subset, keep, etc.
+data.drop_duplicates()
 
+#histogram
+data_outliers.price.hist()
+
+#types of normalization 
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler.fit(data.cylinders.values.reshape(-1,1))
+scaler.transform(data.cylinders.values.reshape(-1,1))
+```
